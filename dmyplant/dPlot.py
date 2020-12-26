@@ -18,7 +18,7 @@ from dmyplant.dReliability import demonstrated_reliability_sr
 
 
 def idx(n, s, e, x):
-    return int(n * (x - s) / (e - s) + 1)
+    return int(n * (x - s) / (e - s)+1)
 
 
 def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFrame, cl=[10, 50, 90], xmin=None, xmax=None, factor=2.0):
@@ -31,7 +31,7 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
         last_ts = xmax
     else:
         if factor:
-            factor = max(factor, 1.05)  # no factor < 1.0 allowed
+            factor = max(factor, 1.0)  # no factor < 1.0 allowed
             elapsed = vl.now_ts - start_ts
             last_ts = start_ts + factor * elapsed
         else:
@@ -120,9 +120,9 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
                 linestyle='--', linewidth=0.7)
 
     # Point of demonstrated reliability at
-    # highest Confiedence Level, today
+    # highest Confidence Level, today
     myrel_y = float(
-        rel[max(cl)][int((vl.now_ts-start_ts)/(last_ts - start_ts)*s)])
+        rel[max(cl)][int((vl.now_ts-start_ts)/(last_ts - start_ts)*s-1)])
     myrel_x = datetime.fromtimestamp(vl.now_ts)
     ax1.scatter(myrel_x, myrel_y, marker='o', color='black', label='point')
     txt = f"CL {max(cl)}%@{T}\nbeta={beta}\nR={myrel_y:.1f}%"
