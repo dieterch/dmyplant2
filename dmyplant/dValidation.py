@@ -29,7 +29,7 @@ class Validation:
     _val = None
     _engines = []
 
-    def __init__(self, mp, dval, show_progress=False):
+    def __init__(self, mp, dval, eval_date=None, cui_log=False):
         """ Myplant Validation object
             collects and provides the engines list.
             compiles a dashboard as pandas DataFrame
@@ -39,6 +39,7 @@ class Validation:
         self._mp = mp
         self._val = dval
         self._now_ts = datetime.now().timestamp()
+        self._eval_ts = self._now_ts if not eval_date else eval_date
         self._valstart_ts = dval['val start'].min()
 
         engines = self._val.to_dict('records')
@@ -49,7 +50,7 @@ class Validation:
             self._engines.append(e)
             log = f"{eng['n']:02d} {e}"
             logging.info(log)
-            if show_progress:
+            if cui_log:
                 print(log)
 
         # iterate over engines and columns
@@ -61,6 +62,11 @@ class Validation:
     def now_ts(self):
         """the current date as EPOCH timestamp"""
         return self._now_ts
+
+    @ property
+    def eval_ts(self):
+        """the current date as EPOCH timestamp"""
+        return self._eval_ts
 
     @ property
     def valstart_ts(self):

@@ -21,7 +21,7 @@ def idx(n, s, e, x):
     return int(n * (x - s) / (e - s)+1)
 
 
-def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFrame, cl=[10, 50, 90], xmin=None, xmax=None, factor=2.0):
+def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFrame, cl=[10, 50, 90], xmin=None, xmax=None, factor=2.0, ymax=24000):
 
     # define milestones
     start_ts = vl.valstart_ts if xmin == None else xmin  # val start
@@ -35,11 +35,11 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
             elapsed = vl.now_ts - start_ts
             last_ts = start_ts + factor * elapsed
         else:
-            raise ValueError("No timerange specified.")
+            raise ValueError("Error in timerange specification.")
 
     fcol = 'grey'
 
-    # first calculate the x axis timerange
+    # calculate the x axis timerange first
     tr = demonstrated_reliability_sr(vl,
                                      start_ts, last_ts, beta=beta, size=s, ft=ft)[0]  # timestamp x axis start .. end
 
@@ -98,6 +98,13 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
 
     # instantiate a second axes that shares the same x-axis
     ax2 = ax1.twinx()
+    ax2.axis((datetime.fromtimestamp(start_ts),
+              datetime.fromtimestamp(last_ts), 0, ymax))
+    color = 'tab:blue'
+    # the x-label was handled with ax1
+    ax2.set_ylabel('hours [h]', color=color)
+    ax2.tick_params(axis='y', labelcolor=color)
+    ax2.yaxis.set_major_locator(ticker.LinearLocator(13))
 
     # and plot the linearized engine runtime lines vs the 2nd axis
     for e in vl.engines[:]:
@@ -107,7 +114,7 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
         ax2.plot(dtr, y, linewidth=0.5, color=fcol)
         # the current validation interval in multiple colors
         n_y = [e.oph(t) for t in n_tr]
-        ax2.plot(n_dtr, n_y)
+        ax2.plot(n_dtr, n_y, label=f"{e.Name} {e._d['Engine ID']}")
 
     # NOW plot some Orientation Lines and Test into the Plot
 
@@ -139,13 +146,16 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
     fl_txt_x = datetime.fromtimestamp(vl.now_ts + 200000)
     txt = f'{len(fl)} engines\nmax {max(fl):.0f}h\ncum {sum(fl):.0f}h\navg {statistics.mean(fl):.0f}h\n{datetime.now():%d.%m.%Y %H:%M}'
     ax2.text(fl_txt_x, max(fl) - T/7, txt)
-    ax2.axis((datetime.fromtimestamp(start_ts),
-              datetime.fromtimestamp(last_ts), 0, 24000))
-    color = 'tab:blue'
-    # the x-label was handled with ax1
-    ax2.set_ylabel('hours [h]', color=color)
-    ax2.tick_params(axis='y', labelcolor=color)
-    ax2.yaxis.set_major_locator(ticker.LinearLocator(13))
+
+    # def on_plot_hover(event):
+    #     # Iterating over each data member plotted
+    #     for curve in ax2.get_lines():
+    #         # Searching which data member corresponds to current mouse position
+    #         if curve.contains(event)[0]:
+    #             print("over %s" % curve.get_gid())
+
+    # plt.legend()
+    #fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)
 
     # TATAAAAH!
     plt.show()
