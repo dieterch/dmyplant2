@@ -2,7 +2,7 @@ import os
 import sys
 import re
 
-from dmyplant import __version__ as version
+from dmyplant2 import __version__ as version
 
 readme = os.path.join(os.path.dirname(__file__), 'README.rst')
 long_description = open(readme).read()

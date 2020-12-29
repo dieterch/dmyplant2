@@ -14,7 +14,7 @@ import matplotlib.ticker as ticker
 import matplotlib.dates as dates
 
 # Load Application imports
-from dmyplant.dReliability import demonstrated_reliability_sr
+from dmyplant2.dReliability import demonstrated_reliability_sr
 
 
 def idx(n, s, e, x):

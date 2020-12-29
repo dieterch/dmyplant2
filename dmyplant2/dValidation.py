@@ -3,7 +3,7 @@ from functools import reduce
 import pandas as pd
 import numpy as np
 import logging
-from dmyplant.dEngine import Engine
+from dmyplant2.dEngine import Engine
 from pprint import pprint as pp
 from scipy.stats.distributions import chi2
 

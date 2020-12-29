@@ -2,7 +2,7 @@
 import math
 from pprint import pprint as pp
 import pandas as pd
-from dmyplant.dMyplant import epoch_ts, mp_ts
+from dmyplant2.dMyplant import epoch_ts, mp_ts
 import sys
 import os
 import pickle
@@ -307,7 +307,7 @@ class EngineReadOnly(Engine):
 
 if __name__ == '__main__':
     import traceback
-    import dmyplant
+    import dmyplant2
 
     try:
         e = EngineReadOnly('1386177')
