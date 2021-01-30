@@ -184,7 +184,7 @@ class Validation:
         """
         Return the Engines containing Name Validation
         """
-        return [e for e in self._engines if name in e._d['Name']]
+        return [e for e in self._engines if name in e.Name]
 
     def eng_serialNumber(self, serialNumber):
         """
