@@ -168,7 +168,7 @@ class Validation:
 
     @ property
     def validation_definition(self):
-        """ 
+        """
         Validation Definition Information as pandas DataFrame
         """
         return self._val
@@ -180,8 +180,14 @@ class Validation:
         """
         return self._engines
 
-    # def eng(self, n):
-    #     """
-    #     Return the n's Engine Validation Definition
-    #     """
-    #     return self._val.iloc[n]
+    def eng_name(self, name):
+        """
+        Return the Engines containing Name Validation
+        """
+        return [e for e in self._engines if name in e._d['Name']]
+
+    def eng_serialNumber(self, serialNumber):
+        """
+        Return the Engines containing Name Validation
+        """
+        return [e for e in self._engines if serialNumber == e.SerialNumber]
