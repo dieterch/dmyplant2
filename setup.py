@@ -8,12 +8,12 @@ readme = os.path.join(os.path.dirname(__file__), 'README.rst')
 long_description = open(readme).read()
 
 SETUP_ARGS = dict(
-    name='dmyplant',
+    name='dmyplant2',
     version=version,
     description=(
         'Grabs Myplant Information for a Validation fleet and populates an Excel File'),
     long_description=long_description,
-    url='https://github.com/<your login>/dmyplant',
+    url='https://github.com/<your login>/dmyplant2',
     author='Dieter Chvatal',
     author_email='dieter.chvatal@innio.com',
     license='MIT',
