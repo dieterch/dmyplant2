@@ -190,4 +190,4 @@ class Validation:
         """
         Return the Engines containing Name Validation
         """
-        return [e for e in self._engines if serialNumber == e.SerialNumber]
+        return [e for e in self._engines if serialNumber == e.serialNumber]
