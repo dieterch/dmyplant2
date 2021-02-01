@@ -254,17 +254,17 @@ class Engine(object):
             ttimecycle = timeCycle
             tassetType = assetType
             tincludeMinMax = includeMinMax
-            tforceDownSampling = 'false'
+            tforceDownSampling = forceDownSampling
 
             url = r'/asset/' + str(self.id) + \
                 r'/history/batchdata' + \
                 r'?from=' + str(tfrom.timestamp * 1000) + \
                 r'&to=' + str(tto.timestamp * 1000) + \
-                r'&assetType=' + tassetType + \
-                r'&dataItemIds=' + tdj + \
-                r'&timeCycle=' + ttimecycle + \
-                r'&includeMinMax=' + tincludeMinMax + \
-                r'&forceDownSampling=' + tforceDownSampling
+                r'&assetType=' + str(tassetType) + \
+                r'&dataItemIds=' + str(tdj) + \
+                r'&timeCycle=' + str(ttimecycle) + \
+                r'&includeMinMax=' + str(tincludeMinMax) + \
+                r'&forceDownSampling=' + str(tforceDownSampling)
 
             # fetch data from myplant ....
             data = self._mp.fetchdata(url)
