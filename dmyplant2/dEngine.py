@@ -225,7 +225,7 @@ class Engine(object):
         except:
             pass
 
-    def batch_hist_dataItems(self, itemIds={161: 'CountOph'}, p_from=None, p_to=None, timeCycle=3600,
+    def batch_hist_dataItems(self, itemIds={161: 'CountOph'}, p_from=None, p_to=None, timeCycle=86400,
                              assetType='J-Engine', includeMinMax='false', forceDownSampling='false'):
         """
         Get pandas dataFrame of dataItems history
