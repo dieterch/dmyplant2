@@ -8,6 +8,7 @@ import os
 import pickle
 import logging
 import json
+import arrow
 
 
 class Engine(object):
@@ -209,7 +210,7 @@ class Engine(object):
 
     def batch_hist_dataItem(self, itemId, p_from, p_to, timeCycle=3600):
         """
-        Get np.array of dataItem history 
+        Get np.array of dataItem history
         dataItemId  int64   Id of the DataItem to query.
         p_from      int64   timestamp start timestamp.
         p_to        int64   timestamp stop timestamp.
@@ -224,7 +225,63 @@ class Engine(object):
         except:
             pass
 
-    @property
+    def batch_hist_dataItems(self, itemIds={161: 'CountOph'}, p_from=None, p_to=None, timeCycle=3600,
+                             assetType='J-Engine', includeMinMax='false', forceDownSampling='false'):
+        """
+        Get pandas dataFrame of dataItems history
+        dataItemIds         dict   e.g. {161: 'CountOph'}, dict of dataItems to query.
+        p_from              string from iso date or timestamp.
+        p_to                string stop iso date or timestamp.
+        timeCycle           int64  interval in seconds.
+        assetType           string default 'J-Engine' 
+        includeMinMax       string 'false' 
+        forceDownSampling   string 'false'
+        """
+        try:
+            if not p_from:
+                tfrom = arrow.get(self.valstart_ts)
+            else:
+                tfrom = arrow.get(p_from)
+
+            if not p_to:
+                tto = arrow.now('Europe/Vienna')
+            else:
+                tto = arrow.get(p_to)
+
+            tdef = itemIds
+            tdj = ','.join([str(s) for s in tdef.keys()])
+
+            ttimecycle = timeCycle
+            tassetType = assetType
+            tincludeMinMax = includeMinMax
+            tforceDownSampling = 'false'
+
+            url = r'/asset/' + str(self.id) + \
+                r'/history/batchdata' + \
+                r'?from=' + str(tfrom.timestamp * 1000) + \
+                r'&to=' + str(tto.timestamp * 1000) + \
+                r'&assetType=' + tassetType + \
+                r'&dataItemIds=' + tdj + \
+                r'&timeCycle=' + ttimecycle + \
+                r'&includeMinMax=' + tincludeMinMax + \
+                r'&forceDownSampling=' + tforceDownSampling
+
+            # fetch data from myplant ....
+            data = self._mp.fetchdata(url)
+
+            # restructure data to dict
+            ds = dict()
+            ds['labels'] = ['time'] + [tdef[x] for x in data['columns'][1]]
+            ds['data'] = [[r[0]] + [rr[0] for rr in r[1]]
+                          for r in data['data']]
+
+            # import to Pandas DataFrame
+            df = pd.DataFrame(ds['data'], columns=ds['labels'])
+            return df
+        except:
+            return None
+
+    @ property
     def id(self):
         """
         MyPlant Asset id
@@ -233,7 +290,7 @@ class Engine(object):
         """
         return self._d['id']
 
-    @property
+    @ property
     def serialNumber(self):
         """
         MyPlant serialNumber
@@ -241,7 +298,7 @@ class Engine(object):
         """
         return self._d['serialNumber']
 
-    @property
+    @ property
     def P(self):
         """
         Number of Parts
@@ -249,7 +306,7 @@ class Engine(object):
         """
         return self._P
 
-    @property
+    @ property
     def properties(self):
         """
         properties dict
@@ -257,7 +314,7 @@ class Engine(object):
         """
         return self.asset['properties']
 
-    @property
+    @ property
     def dataItems(self):
         """
         dataItems dict
@@ -265,7 +322,7 @@ class Engine(object):
         """
         return self.asset['dataItems']
 
-    @property
+    @ property
     def valstart_ts(self):
         """
         Individual Validation Start Date
@@ -274,7 +331,7 @@ class Engine(object):
         """
         return self._valstart_ts
 
-    @property
+    @ property
     def valstart_oph(self):
         """
         Individual Validation Start Date
