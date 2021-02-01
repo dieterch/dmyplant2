@@ -274,6 +274,15 @@ class Engine(object):
         """
         return self._valstart_ts
 
+    @property
+    def valstart_oph(self):
+        """
+        Individual Validation Start Date
+        as EPOCH timestamp
+        e.g.: vs = e.valstart_ts
+        """
+        return self._d['oph@start']
+
     @ property
     def now_ts(self):
         """
