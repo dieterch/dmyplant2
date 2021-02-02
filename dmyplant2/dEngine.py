@@ -225,12 +225,13 @@ class Engine(object):
         except:
             pass
 
-    def batch_hist_dataItems(self, itemIds={161: 'CountOph'}, p_from=None, p_to=None, timeCycle=86400,
+    def batch_hist_dataItems(self, itemIds={161: 'CountOph'}, p_limit=None, p_from=None, p_to=None, timeCycle=86400,
                              assetType='J-Engine', includeMinMax='false', forceDownSampling='false'):
         """
-        Get pandas dataFrame of dataItems history
+        Get pandas dataFrame of dataItems history, either limit or From & to are required
         dataItemIds         dict   e.g. {161: 'CountOph'}, dict of dataItems to query.
-        p_from              string from iso date or timestamp.
+        limit               int64, number of points to download
+        p_from              string from iso date or timestamp,
         p_to                string stop iso date or timestamp.
         timeCycle           int64  interval in seconds.
         assetType           string default 'J-Engine' 
@@ -238,15 +239,16 @@ class Engine(object):
         forceDownSampling   string 'false'
         """
         try:
-            if not p_from:
-                tfrom = arrow.get(self.valstart_ts)
+            tt = r""
+            if p_limit:
+                tt = r"&limit=" + str(p_limit)
             else:
-                tfrom = arrow.get(p_from)
-
-            if not p_to:
-                tto = arrow.now('Europe/Vienna')
-            else:
-                tto = arrow.get(p_to)
+                if p_from and p_to:
+                    tt = r'&from=' + str(arrow.get(p_from).timestamp * 1000) + \
+                        r'&to=' + str(arrow.get(p_to).timestamp * 1000)
+                else:
+                    raise Exception(
+                        r"batch_hist_dataItems, invalid Parameters")
 
             tdef = itemIds
             tdj = ','.join([str(s) for s in tdef.keys()])
@@ -258,9 +260,8 @@ class Engine(object):
 
             url = r'/asset/' + str(self.id) + \
                 r'/history/batchdata' + \
-                r'?from=' + str(tfrom.timestamp * 1000) + \
-                r'&to=' + str(tto.timestamp * 1000) + \
-                r'&assetType=' + str(tassetType) + \
+                r'?assetType=' + str(tassetType) + \
+                tt + \
                 r'&dataItemIds=' + str(tdj) + \
                 r'&timeCycle=' + str(ttimecycle) + \
                 r'&includeMinMax=' + str(tincludeMinMax) + \
