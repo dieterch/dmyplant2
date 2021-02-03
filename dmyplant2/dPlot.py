@@ -1,5 +1,6 @@
 ﻿
 # Standard Library imports
+import arrow
 from datetime import datetime
 import pandas as pd
 import numpy as np
@@ -144,7 +145,7 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
     fl_point_x = datetime.fromtimestamp(vl.now_ts)
     ax2.scatter(fl_point_x, max(fl), marker='o', color='black', label='point')
     fl_txt_x = datetime.fromtimestamp(vl.now_ts + 200000)
-    txt = f'{len(fl)} engines\nmax {max(fl):.0f}h\ncum {sum(fl):.0f}h\navg {statistics.mean(fl):.0f}h\n{datetime.now():%d.%m.%Y %H:%M}'
+    txt = f'{len(fl)} engines\nmax {max(fl):.0f}h\ncum {sum(fl):.0f}h\navg {statistics.mean(fl):.0f}h\n{arrow.now("Europe/Vienna").format("DD.MM.YYYY HH:mm")}'
     ax2.text(fl_txt_x, max(fl) - T/7, txt)
 
     # def on_plot_hover(event):
