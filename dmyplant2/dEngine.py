@@ -282,6 +282,45 @@ class Engine(object):
         except:
             return None
 
+    def batch_hist_alarms(self, p_severities=[600, 800], p_offset=0, p_limit=None, p_from=None, p_to=None):
+        """
+        Get pandas dataFrame of Events history, either limit or From & to are required
+        p_severities          list   600,650 ... operational messages
+                                   700 ... warnings
+                                   800 ... alarms
+        p_offset            int64, number of messages to skip 
+        p_limit             int64, number of messages to download
+        p_from              string timestamp in milliseconds.
+        p_to                string timestamp in milliseconds.
+        """
+        try:
+            tt = r""
+            if p_limit:
+                tt = r"&offset=" + str(p_offset) + \
+                    r"&limit=" + str(p_limit)
+            else:
+                if p_from and p_to:
+                    tt = r'&from=' + str(arrow.get(p_from).timestamp * 1000) + \
+                        r'&to=' + str(arrow.get(p_to).timestamp * 1000)
+                else:
+                    raise Exception(
+                        r"batch_hist_alarms, invalid Parameters")
+
+            tsvj = ','.join([str(s) for s in p_severities])
+
+            url = r'/asset/' + str(self.id) + \
+                r'/history/alarms' + \
+                r'?severities=' + str(tsvj) + tt
+
+            # fetch messages from myplant ....
+            messages = self._mp.fetchdata(url)
+
+            # import to Pandas DataFrame
+            dm = pd.DataFrame(messages)
+            return dm
+        except:
+            return None
+
     @ property
     def id(self):
         """
