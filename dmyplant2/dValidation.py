@@ -147,8 +147,8 @@ class Validation:
             raise
         # Collect all values in a Pandas DateFrame
         loc = [[e.get_property(k)
-                for k in keys] + [e.Name] for e in self._engines]
-        return pd.DataFrame(loc, columns=keys + ['Name'])
+                for k in keys] + [e.id, e.Name] for e in self._engines]
+        return pd.DataFrame(loc, columns=keys + ['AssetID', 'Name'])
 
     @ property
     def dataItems(self):
