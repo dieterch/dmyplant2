@@ -389,6 +389,28 @@ class Engine(object):
         """
         return datetime.now().timestamp()
 
+    @ property
+    def dash(self):
+        dashcols = [
+            'Name',
+            'Engine ID',
+            'Design Number',
+            'Engine Type',
+            'Engine Version',
+            'P',
+            'P_NOM'
+            'BMEP',
+            'serialNumber',
+            'id',
+            'Count_OpHour',
+            'val start',
+            'oph@start',
+            'oph parts',
+        ]
+        # iterate over engines and columns
+        ldash = [self._d[c] for c in dashcols]
+        return ldash
+
 
 class EngineReadOnly(Engine):
     """
@@ -417,11 +439,9 @@ if __name__ == '__main__':
 
     try:
         e = EngineReadOnly('1386177')
-        print(
-            f"Dump Json File of Engine {e.Name}, SerialNumber {e.serialNumber}, Asset id {e.id}")
-        print(e.valstart_ts)
-        with open(os.getcwd() + '/data/' + e.serialNumber + '.json', 'w') as fp:
-            json.dump(e.asset, fp)
+        # with open(os.getcwd() + '/data/' + e.serialNumber + '.json', 'w') as fp:
+        #    json.dump(e.asset, fp)
+        print(e.dash)
 
     except Exception as ex:
         print(ex)
