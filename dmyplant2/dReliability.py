@@ -19,17 +19,24 @@ def lipson_equality(p, t1, t2, beta) -> float:
 
 
 def demonstrated_reliability_sr(val, start, end, beta=1.21, CL=0.9, T=30000, ft=pd.DataFrame, size=10):
+    # failures array
     f_arr = np.zeros(size)
+    # time points array
     t_arr = np.linspace(start, end, size)
 
+    # populate the number of failures vs time array
+    # based on failures Dataframe information
     if not(ft.empty):
         for row in ft.values:
             fl = np.where(t_arr > row[0].timestamp(), row[1], 0)
             f_arr += fl
 
+    # initialize demonstrated Reliability vs. time array
     dr_arr = []
+
+    # exeecute the algorithm
+    m = np.array([e.Cylinders for e in val.engines])
     for i, t in enumerate(t_arr):
-        m = np.array([e.Cylinders for e in val.engines])
         tt = np.array([e.oph(t) for e in val.engines])
         tt_max = max(tt)
         if tt_max > 0.0:  # avoid division by zero

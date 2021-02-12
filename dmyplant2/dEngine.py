@@ -2,6 +2,7 @@
 import math
 from pprint import pprint as pp
 import pandas as pd
+import numpy as np
 from dmyplant2.dMyplant import epoch_ts, mp_ts
 import sys
 import os
@@ -341,12 +342,135 @@ class Engine(object):
         return self.get_data('nokey', 'serialNumber')
         # return self._d['serialNumber']
 
+    @ staticmethod
+    def _bore(platform):
+        """
+        return bore for platform in [mm]
+        """
+        lbore = {
+            '9': 310.0,
+            '6': 190.0,
+            '4': 145.0,
+            '3': 135.0
+        }
+        return lbore[platform]
+
+    @ property
+    def bore(self):
+        """
+        bore in [mm]
+        """
+        lkey = self.get_property('Engine Series')
+        return self._bore(lkey)
+
+    @ staticmethod
+    def _stroke(platform):
+        """
+        return stroke for platform in [mm]
+        """
+        lstroke = {
+            '9': 350.0,
+            '6': 220.0,
+            '4': 185.0,
+            '3': 170.0
+        }
+        return lstroke[platform]
+
+    @ property
+    def stroke(self):
+        """
+        stroke in [mm]
+        """
+        lkey = self.get_property('Engine Series')
+        return self._stroke(lkey)
+
+    @ classmethod
+    def _cylvol(cls, platform):
+        """
+        Swept Volume for platform per Cylinder in [l]
+        """
+        lbore = cls._bore(platform)
+        lstroke = cls._stroke(platform)
+        return (lbore / 100.0) * (lbore / 100.0) * np.pi / 4.0 * (lstroke / 100.0)
+
+    @ classmethod
+    def _mechpower(cls, platform, cylanz, bmep, speed):
+        """
+        mechanical power in [kW]
+        platform ... '3','4','6','9'
+        cylanz ... int
+        bmep ... bar
+        speed ... int
+        """
+        return cls._cylvol(platform) * cylanz * bmep * speed / 1200.0
+
+    @ property
+    def cylvol(self):
+        """
+        Swept Volume per Cylinder in [l]
+        """
+        lkey = self.get_property('Engine Series')
+        return self._cylvol(lkey)
+
+    @ property
+    def engvol(self):
+        """
+        Swept Volume per Engine in [l]
+        """
+        lkey = self.get_property('Engine Series')
+        return self._cylvol(lkey) * self.Cylinders
+
     @ property
     def Cylinders(self):
         """
         Number of Cylinders
         """
         return int(str(self.get_property('Engine Type')[-2:]))
+
+    @ property
+    def P_nominal(self):
+        """
+        Nominal electrical Power in [kW]
+        """
+        return self.get_dataItem('Power_PowerNominal')
+
+    @ property
+    def cos_phi(self):
+        """
+        cos phi ... current Power Factor[-]
+        """
+        return self.get_dataItem('halio_power_fact_cos_phi')
+
+    @ property
+    def Generator_Efficiency(self):
+        #gmodel = self.get_property('Generator Model')
+        #cosphi = self.get_dataItem('halio')
+        el_eff = {
+            '624': 0.981,
+            '620': 0.98,
+            '616': 0.976,
+            '612': 0.986
+        }
+        lkey = self.get_property('Engine Type')
+        return el_eff[lkey]
+
+    @ property
+    def Pmech_nominal(self):
+        """
+        Nominal, Calculated mechanical Power in [kW]
+        """
+        return self.P_nominal / self.Generator_Efficiency
+
+    @ property
+    def Speed_nominal(self):
+        """
+        Nominal Speed in [rp/m]
+        """
+        return self.get_dataItem('Para_Speed_Nominal')
+
+    @ property
+    def BMEP(self):
+        return 1200.0 * self.Pmech_nominal / (self.engvol * self.Speed_nominal)
 
     @property
     def oph_parts(self):
@@ -433,6 +557,8 @@ class Engine(object):
         _dash['Engine Type'] = self.get_property('Engine Type')
         _dash['Engine Version'] = self.get_property('Engine Version')
         _dash['P'] = self.Cylinders
+        _dash['P_nom'] = self.Pmech_nominal
+        _dash['BMEP'] = self.BMEP
         _dash['serialNumber'] = self.serialNumber
         _dash['id'] = self.id
         _dash['Count_OpHour'] = self.Count_OpHour
