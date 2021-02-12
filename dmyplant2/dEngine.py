@@ -402,7 +402,7 @@ class Engine(object):
         bmep ... bar
         speed ... int
         """
-        return cls._cylvol(platform) * cylanz * bmep * speed / 1200.0
+        return np.around(cls._cylvol(platform) * cylanz * bmep * speed / 1200.0, decimals=1)
 
     @ property
     def cylvol(self):
@@ -459,7 +459,7 @@ class Engine(object):
         """
         Nominal, Calculated mechanical Power in [kW]
         """
-        return self.P_nominal / self.Generator_Efficiency
+        return np.around(self.P_nominal / self.Generator_Efficiency, decimals=1)
 
     @ property
     def Speed_nominal(self):
@@ -470,7 +470,7 @@ class Engine(object):
 
     @ property
     def BMEP(self):
-        return 1200.0 * self.Pmech_nominal / (self.engvol * self.Speed_nominal)
+        return np.around(1200.0 * self.Pmech_nominal / (self.engvol * self.Speed_nominal), decimals=1)
 
     @property
     def oph_parts(self):
