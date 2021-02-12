@@ -402,7 +402,7 @@ class Engine(object):
         bmep ... bar
         speed ... int
         """
-        return np.around(cls._cylvol(platform) * cylanz * bmep * speed / 1200.0, decimals=1)
+        return np.around(cls._cylvol(platform) * cylanz * bmep * speed / 1200.0, decimals=0)
 
     @ property
     def cylvol(self):
@@ -432,7 +432,7 @@ class Engine(object):
         """
         Nominal electrical Power in [kW]
         """
-        return self.get_dataItem('Power_PowerNominal')
+        return np.around(float(self.get_dataItem('Power_PowerNominal')), decimals=0)
 
     @ property
     def cos_phi(self):
