@@ -18,8 +18,8 @@ class Validation:
         'Engine Type',
         'Engine Version',
         'P',
-        'P_NOM'
-        'BMEP',
+        # 'P_NOM',
+        # 'BMEP',
         'serialNumber',
         'id',
         'Count_OpHour',
