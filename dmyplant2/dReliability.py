@@ -29,7 +29,7 @@ def demonstrated_reliability_sr(val, start, end, beta=1.21, CL=0.9, T=30000, ft=
 
     dr_arr = []
     for i, t in enumerate(t_arr):
-        m = np.array([e.P for e in val.engines])
+        m = np.array([e.Cylinders for e in val.engines])
         tt = np.array([e.oph(t) for e in val.engines])
         tt_max = max(tt)
         if tt_max > 0.0:  # avoid division by zero
