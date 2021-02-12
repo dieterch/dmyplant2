@@ -59,7 +59,8 @@ class Validation:
         #ldash = [[e._d[c] for c in self._dashcols] for e in self._engines]
         ldash = [e.dash for e in self._engines]
         # dashboard as pandas Dataframe
-        self._dash = pd.DataFrame(ldash, columns=self._dashcols)
+        #self._dash = pd.DataFrame(ldash, columns=self._dashcols)
+        self._dash = pd.DataFrame(ldash)
 
     @ property
     def now_ts(self):

@@ -32,6 +32,7 @@ class Engine(object):
 
         # take engine Myplant Serial Number from Validation Definition
         self._mp = mp
+        self._eng = eng
         self._sn = str(eng['serialNumber'])
         fname = os.getcwd() + '/data/' + self._sn
         self._picklefile = fname + '.pkl'    # load persitant data
@@ -234,8 +235,8 @@ class Engine(object):
         p_from              string from iso date or timestamp,
         p_to                string stop iso date or timestamp.
         timeCycle           int64  interval in seconds.
-        assetType           string default 'J-Engine' 
-        includeMinMax       string 'false' 
+        assetType           string default 'J-Engine'
+        includeMinMax       string 'false'
         forceDownSampling   string 'false'
         """
         try:
@@ -288,7 +289,7 @@ class Engine(object):
         p_severities          list   600,650 ... operational messages
                                    700 ... warnings
                                    800 ... alarms
-        p_offset            int64, number of messages to skip 
+        p_offset            int64, number of messages to skip
         p_limit             int64, number of messages to download
         p_from              string timestamp in milliseconds.
         p_to                string timestamp in milliseconds.
@@ -328,7 +329,8 @@ class Engine(object):
 
         e.g.: id = e.id
         """
-        return self._d['id']
+        return self.get_data('nokey', 'id')
+        # return self._d['id']
 
     @ property
     def serialNumber(self):
@@ -336,15 +338,22 @@ class Engine(object):
         MyPlant serialNumber
         e.g.: serialNumber = e.serialNumber
         """
-        return self._d['serialNumber']
+        return self.get_data('nokey', 'serialNumber')
+        # return self._d['serialNumber']
 
     @ property
-    def P(self):
+    def Cylinders(self):
         """
-        Number of Parts
-        e.g.: m = e.P
+        Number of Cylinders
         """
-        return self._P
+        return int(str(self.get_property('Engine Type')[-2:]))
+
+    @property
+    def oph_parts(self):
+        """
+        Oph since Validation Start
+        """
+        return int(self.Count_OpHour - self.oph_start)
 
     @ property
     def properties(self):
@@ -363,13 +372,32 @@ class Engine(object):
         return self.asset['dataItems']
 
     @ property
+    def val_start(self):
+        """
+        Individual Validation Start Date
+        as String
+        """
+        return str(self._eng['val start'])
+        # return self._valstart_ts
+
+    @ property
+    def oph_start(self):
+        """
+        oph at Validation Start
+        as Int
+        """
+        return int(self._eng['oph@start'])
+        # return self._valstart_ts
+
+    @ property
     def valstart_ts(self):
         """
         Individual Validation Start Date
         as EPOCH timestamp
         e.g.: vs = e.valstart_ts
         """
-        return self._valstart_ts
+        return epoch_ts(self._eng['val start'].timestamp())
+        # return self._valstart_ts
 
     @ property
     def valstart_oph(self):
@@ -390,26 +418,28 @@ class Engine(object):
         return datetime.now().timestamp()
 
     @ property
+    def Count_OpHour(self):
+        """
+        get current OP Hours
+        """
+        return int(self.get_dataItem('Count_OpHour'))
+
+    @ property
     def dash(self):
-        dashcols = [
-            'Name',
-            'Engine ID',
-            'Design Number',
-            'Engine Type',
-            'Engine Version',
-            'P',
-            # 'P_NOM',
-            # 'BMEP',
-            'serialNumber',
-            'id',
-            'Count_OpHour',
-            'val start',
-            'oph@start',
-            'oph parts',
-        ]
-        # iterate over engines and columns
-        ldash = [self._d[c] for c in dashcols]
-        return ldash
+        _dash = dict()
+        _dash['Name'] = self.Name
+        _dash['Engine ID'] = self.get_property('Engine ID')
+        _dash['Design Number'] = self.get_property('Design Number')
+        _dash['Engine Type'] = self.get_property('Engine Type')
+        _dash['Engine Version'] = self.get_property('Engine Version')
+        _dash['P'] = self.Cylinders
+        _dash['serialNumber'] = self.serialNumber
+        _dash['id'] = self.id
+        _dash['Count_OpHour'] = self.Count_OpHour
+        _dash['val start'] = self.val_start
+        _dash['oph@start'] = self.oph_start
+        _dash['oph parts'] = self.oph_parts
+        return _dash
 
 
 class EngineReadOnly(Engine):
