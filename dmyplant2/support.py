@@ -30,6 +30,14 @@ def getCredentials():
     }
 
 
+def saveCredentials(cred):
+    try:
+        with open("./data/.credentials", "w") as file:
+            json.dump(cred, file)
+    except FileNotFoundError:
+        raise
+
+
 def cred():
     if not os.path.exists(os.getcwd() + '/data'):
         os.makedirs(os.getcwd() + '/data')
@@ -38,10 +46,7 @@ def cred():
             cred = json.load(file)
         if forceUpdate(cred['lastupdate']):
             cred = getCredentials()
+            saveCredentials(cred)
     else:
         cred = getCredentials()
-        try:
-            with open("./data/.credentials", "w") as file:
-                json.dump(cred, file)
-        except FileNotFoundError:
-            raise
+        saveCredentials(cred)
