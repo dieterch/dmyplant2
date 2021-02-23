@@ -2,6 +2,7 @@
 # Standard Library imports
 import arrow
 from datetime import datetime
+from itertools import cycle
 import pandas as pd
 import numpy as np
 from pprint import pprint as pp
@@ -10,6 +11,7 @@ import sys
 import time
 
 # Third party imports
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import matplotlib.dates as dates
@@ -159,6 +161,72 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
     #fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)
 
     # TATAAAAH!
+    plt.show()
+
+
+def chart(d, ys):
+    fig, ax = plt.subplots(figsize=(20, 12))
+
+    axes = [ax]
+    for y in ys[1:]:
+        # Twin the x-axis twice to make independent y-axes.
+        axes.append(ax.twinx())
+
+    extra_ys = len(axes[2:])
+
+    # Make some space on the right side for the extra y-axes.
+    if extra_ys > 0:
+        temp = 0.95
+        if extra_ys <= 2:
+            temp = 0.9
+        elif extra_ys <= 4:
+            temp = 0.7
+        if extra_ys > 5:
+            print('you are being ridiculous')
+        fig.subplots_adjust(right=temp)
+        right_additive = (0.98-temp)/float(extra_ys)
+    # Move the last y-axis spine over to the right by x% of the width of the axes
+    i = 1.
+    for ax in axes[2:]:
+        ax.spines['right'].set_position(('axes', 1.+right_additive*i))
+        ax.set_frame_on(True)
+        ax.patch.set_visible(False)
+        ax.yaxis.set_major_formatter(matplotlib.ticker.ScalarFormatter())
+        i += 1.
+    # To make the border of the right-most axis visible, we need to turn the frame
+    # on. This hides the other plots, however, so we need to turn its fill off.
+
+    cols = []
+    lines = []
+    line_styles = cycle(['-', '-', '-', '--', '-.', ':', '.', ',', 'o', 'v', '^', '<', '>',
+                         '1', '2', '3', '4', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|', '_'])
+    colors = cycle(matplotlib.rcParams['axes.prop_cycle'])
+    for ax, y in zip(axes, ys):
+        ls = next(cycle(line_styles))
+        if len(y) == 1:
+            col = y[0]
+            cols.append(col)
+            color = next(cycle(colors))['color']
+            lines.append(ax.plot(d[col], linestyle=ls, label=col, color=color))
+
+            ax.set_ylabel(col, color=color)
+            ax.tick_params(axis='y', colors=color)
+            ax.spines['right'].set_color(color)
+        else:
+            for col in y:
+                color = next(cycle(colors))['color']
+                lines.append(
+                    ax.plot(d[col], linestyle=ls, label=col, color=color))
+                cols.append(col)
+            ax.set_ylabel(', '.join(y))
+            ax.tick_params(axis='y')
+    axes[0].set_xlabel(d.index.name)
+    lns = lines[0]
+    for l in lines[1:]:
+        lns += l
+    labs = [l.get_label() for l in lns]
+    axes[0].legend(lns, labs, loc=0)
+
     plt.show()
 
 
