@@ -176,11 +176,11 @@ def chart(d, ys):
 
     # Make some space on the right side for the extra y-axes.
     if extra_ys > 0:
-        temp = 0.90
+        temp = 0.95
         if extra_ys <= 2:
             temp = 0.85
         elif extra_ys <= 4:
-            temp = 0.65
+            temp = 0.60
         if extra_ys > 5:
             print('you are being ridiculous')
         fig.subplots_adjust(right=temp)
