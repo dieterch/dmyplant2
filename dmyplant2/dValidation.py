@@ -11,22 +11,22 @@ from scipy.stats.distributions import chi2
 class Validation:
 
     # define dashboard columns in expected order
-    _dashcols = [
-        'Name',
-        'Engine ID',
-        'Design Number',
-        'Engine Type',
-        'Engine Version',
-        'P',
-        # 'P_NOM',
-        # 'BMEP',
-        'serialNumber',
-        'id',
-        'Count_OpHour',
-        'val start',
-        'oph@start',
-        'oph parts',
-    ]
+    # _dashcols = [
+    #     'Name',
+    #     'Engine ID',
+    #     'Design Number',
+    #     'Engine Type',
+    #     'Engine Version',
+    #     'P',
+    #     # 'P_NOM',
+    #     # 'BMEP',
+    #     'serialNumber',
+    #     'id',
+    #     'Count_OpHour',
+    #     'val start',
+    #     'oph@start',
+    #     'oph parts',
+    # ]
     _dash = None
     _val = None
     _engines = []
