@@ -565,6 +565,8 @@ class Engine(object):
         _dash['val start'] = self.val_start
         _dash['oph@start'] = self.oph_start
         _dash['oph parts'] = self.oph_parts
+        _dash['LOC'] = self.get_dataItem(
+            'RMD_ListBuffMAvgOilConsume_OilConsumption')
         return _dash
 
 
