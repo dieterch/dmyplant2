@@ -65,6 +65,7 @@ class Engine(object):
                 f"Initialize Engine Object, SerialNumber: {self._sn}")
             self._d = self._engine_data(eng)
             self._set_oph_parameter()
+            self._set_oph_parameter2()
             self._save()
 
     def __str__(self):
@@ -103,8 +104,19 @@ class Engine(object):
         internal
         Calculate line parameters, oph - line
         """
-        self._k = float(self._d['oph parts']) / \
-            (self._lastDataFlowDate - self._valstart_ts)
+        self._k = float(self.oph_parts /
+                        (self._lastDataFlowDate - self._valstart_ts))
+
+    def _set_oph_parameter2(self):
+        """
+        internal
+        Calculate line parameters, oph - line
+        """
+        self._k2 = float(self.oph_parts /
+                         (self.now_ts - self._valstart_ts))
+
+#        self._k = float(self._d['oph parts']) / \
+#            (self._lastDataFlowDate - self._valstart_ts)
 
     def oph(self, ts):
         """
@@ -112,6 +124,15 @@ class Engine(object):
         t -> epoch timestamp
         """
         y = self._k * (ts - self._valstart_ts)
+        y = y if y > 0.0 else 0.0
+        return y
+
+    def oph2(self, ts):
+        """
+        linear inter- and extrapolation of oph(t)
+        t -> epoch timestamp
+        """
+        y = self._k2 * (ts - self._valstart_ts)
         y = y if y > 0.0 else 0.0
         return y
 
@@ -443,8 +464,8 @@ class Engine(object):
 
     @ property
     def Generator_Efficiency(self):
-        #gmodel = self.get_property('Generator Model')
-        #cosphi = self.get_dataItem('halio')
+        # gmodel = self.get_property('Generator Model')
+        # cosphi = self.get_dataItem('halio')
         el_eff = {
             '624': 0.981,
             '620': 0.98,
@@ -472,7 +493,7 @@ class Engine(object):
     def BMEP(self):
         return np.around(1200.0 * self.Pmech_nominal / (self.engvol * self.Speed_nominal), decimals=1)
 
-    @property
+    @ property
     def oph_parts(self):
         """
         Oph since Validation Start
