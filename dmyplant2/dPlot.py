@@ -143,7 +143,7 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
     ax1.axis((datetime.fromtimestamp(start_ts),
               datetime.fromtimestamp(last_ts), 0, 120))
     # oph Fleet Leader
-    fl = [e.oph(vl.now_ts) for e in vl.engines]
+    fl = [e.oph2(vl.now_ts) for e in vl.engines]
     fl_point_x = datetime.fromtimestamp(vl.now_ts)
     ax2.scatter(fl_point_x, max(fl), marker='o', color='black', label='point')
     fl_txt_x = datetime.fromtimestamp(vl.now_ts + 200000)
