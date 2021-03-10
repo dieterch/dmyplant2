@@ -65,7 +65,6 @@ class Engine(object):
                 f"Initialize Engine Object, SerialNumber: {self._sn}")
             self._d = self._engine_data(eng)
             self._set_oph_parameter()
-            self._set_oph_parameter2()
             self._save()
 
     def __str__(self):
@@ -104,19 +103,17 @@ class Engine(object):
         internal
         Calculate line parameters, oph - line
         """
+        # for the oph(ts) function
+        # this function uses the exect date to calculate
+        # the interpolation line
         self._k = float(self.oph_parts /
                         (self._lastDataFlowDate - self._valstart_ts))
-
-    def _set_oph_parameter2(self):
-        """
-        internal
-        Calculate line parameters, oph - line
-        """
+        # for the oph2(ts) function
+        # this function uses the myplant reported hours and the
+        # request time to calculate the inperpolation
+        # for low validation oph this gives more consistent results
         self._k2 = float(self.oph_parts /
                          (self.now_ts - self._valstart_ts))
-
-#        self._k = float(self._d['oph parts']) / \
-#            (self._lastDataFlowDate - self._valstart_ts)
 
     def oph(self, ts):
         """
@@ -129,8 +126,10 @@ class Engine(object):
 
     def oph2(self, ts):
         """
-        linear inter- and extrapolation of oph(t)
+        linear inter- and extrapolation of oph2(t)
         t -> epoch timestamp
+        uses different parameter calculation method,
+        see _set_oph_parameter function
         """
         y = self._k2 * (ts - self._valstart_ts)
         y = y if y > 0.0 else 0.0
