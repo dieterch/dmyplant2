@@ -81,6 +81,7 @@ class Engine(object):
 
     def _cache_expired(self):
         """
+        internal
         time has since last Server contact
         returns (delta -> float, passed -> boolean)
         """
@@ -89,6 +90,7 @@ class Engine(object):
 
     def _restructure(self, local_asset):
         """
+        internal
         Restructure Asset Data, add Variable
         Item names as dict key in dataItems & Properties
         """
@@ -302,7 +304,7 @@ class Engine(object):
             df = pd.DataFrame(ds['data'], columns=ds['labels'])
             return df
         except:
-            return None
+            raise
 
     def batch_hist_alarms(self, p_severities=[600, 800], p_offset=0, p_limit=None, p_from=None, p_to=None):
         """
@@ -341,7 +343,7 @@ class Engine(object):
             dm = pd.DataFrame(messages)
             return dm
         except:
-            return None
+            raise
 
     @ property
     def id(self):
