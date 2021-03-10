@@ -309,9 +309,10 @@ class Engine(object):
     def batch_hist_alarms(self, p_severities=[600, 800], p_offset=0, p_limit=None, p_from=None, p_to=None):
         """
         Get pandas dataFrame of Events history, either limit or From & to are required
-        p_severities          list   600,650 ... operational messages
-                                   700 ... warnings
-                                   800 ... alarms
+        p_severities        list   
+                                600,650 ... operational messages
+                                700 ... warnings
+                                800 ... alarms
         p_offset            int64, number of messages to skip
         p_limit             int64, number of messages to download
         p_from              string timestamp in milliseconds.
